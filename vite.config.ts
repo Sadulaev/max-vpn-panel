@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     port: 6000,
     allowedHosts: [
-      'api.santa-cloud.tech',
+      'api.my-vpn-tech.ru',
     ],
     proxy: {
       '/api': {
