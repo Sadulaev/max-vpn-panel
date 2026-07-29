@@ -31,7 +31,7 @@ const DashboardLayout = () => {
 
   const menuItems = [
     { key: '/admin/subscriptions', icon: <FileTextOutlined />, label: 'Подписки' },
-    { key: '/admin/clients', icon: <TeamOutlined />, label: 'Клиенты' },
+    { key: '/admin/clients', icon: <TeamOutlined />, label: 'Юзеры' },
     { key: '/admin/marzban', icon: <NodeIndexOutlined />, label: 'Сервера (Marzban)' },
     { key: '/admin/plans', icon: <UnorderedListOutlined />, label: 'Тарифы' },
     { key: '/admin/device-slots', icon: <LaptopOutlined />, label: 'Слоты устройств' },
