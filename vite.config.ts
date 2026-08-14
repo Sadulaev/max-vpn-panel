@@ -20,19 +20,3 @@ export default defineConfig({
     },
   },
 })
-  build: {
-    outDir: 'dist',
-  },
-  server: {
-    port: 6000,
-    allowedHosts: [
-      'api.my-vpn-tech.ru',
-    ],
-    proxy: {
-      '/api': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
-      },
-    },
-  },
-})
