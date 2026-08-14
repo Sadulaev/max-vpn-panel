@@ -12,7 +12,7 @@ services:
     container_name: hyper-vpn-frontend
     restart: always
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:6000/"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:6000/"]
       interval: 30s
       timeout: 3s
       retries: 3
@@ -31,10 +31,12 @@ services:
         max-file: "3"
 
 # Nginx config for external server:
-# location /admin {
-#     rewrite ^/admin(.*)$ $1 break;
+# location / {
 #     proxy_pass http://127.0.0.1:6000;
+#     proxy_http_version 1.1;
+#     proxy_set_header Host $host;
+#     proxy_set_header X-Real-IP $remote_addr;
+#     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#     proxy_set_header X-Forwarded-Proto $scheme;
 # }
-# location /assets {
-#     proxy_pass http://127.0.0.1:6000;
-# }
+

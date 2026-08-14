@@ -10,7 +10,7 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
 
   if (isAuthenticated) {
-    return <Navigate to="/admin/subscriptions" replace />;
+    return <Navigate to="/subscriptions" replace />;
   }
 
   const onFinish = async (values: { username: string; password: string }) => {
@@ -19,7 +19,7 @@ const LoginPage = () => {
       const success = await login(values.username, values.password);
       if (success) {
         message.success('Вход выполнен');
-        navigate('/admin/subscriptions');
+        navigate('/subscriptions');
       } else {
         message.error('Неверный логин или пароль');
       }

@@ -30,20 +30,20 @@ const DashboardLayout = () => {
   }, []);
 
   const menuItems = [
-    { key: '/admin/subscriptions', icon: <FileTextOutlined />, label: 'Подписки' },
-    { key: '/admin/clients', icon: <TeamOutlined />, label: 'Юзеры' },
-    { key: '/admin/marzban', icon: <NodeIndexOutlined />, label: 'Сервера (Marzban)' },
-    { key: '/admin/plans', icon: <UnorderedListOutlined />, label: 'Тарифы' },
-    { key: '/admin/device-slots', icon: <LaptopOutlined />, label: 'Слоты устройств' },
-    { key: '/admin/messages', icon: <MessageOutlined />, label: 'Рассылка' },
-    { key: '/admin/payments', icon: <DollarOutlined />, label: 'Платежи' },
-    { key: '/admin/bot-pages', icon: <RobotOutlined />, label: 'Страницы бота' },
-    { key: '/admin/settings', icon: <SettingOutlined />, label: 'Настройки' },
+    { key: '/subscriptions', icon: <FileTextOutlined />, label: 'Подписки' },
+    { key: '/clients', icon: <TeamOutlined />, label: 'Юзеры' },
+    { key: '/marzban', icon: <NodeIndexOutlined />, label: 'Сервера (Marzban)' },
+    { key: '/plans', icon: <UnorderedListOutlined />, label: 'Тарифы' },
+    { key: '/device-slots', icon: <LaptopOutlined />, label: 'Слоты устройств' },
+    { key: '/messages', icon: <MessageOutlined />, label: 'Рассылка' },
+    { key: '/payments', icon: <DollarOutlined />, label: 'Платежи' },
+    { key: '/bot-pages', icon: <RobotOutlined />, label: 'Страницы бота' },
+    { key: '/settings', icon: <SettingOutlined />, label: 'Настройки' },
   ];
 
   const handleLogout = () => {
     logout();
-    navigate('/admin/login');
+    navigate('/login');
   };
 
   const handleNav = (key: string) => {
