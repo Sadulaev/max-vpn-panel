@@ -22,33 +22,28 @@ function App() {
         <Routes>
           <Route path="/app/:token" element={<AppLayout />} />
           <Route path="/404" element={<NotFoundPage />} />
-
           <Route path="/login" element={<LoginPage />} />
 
           <Route
-            path="/"
             element={
               <ProtectedRoute>
                 <DashboardLayout />
               </ProtectedRoute>
             }
           >
-            <Route index element={<Navigate to="/subscriptions" replace />} />
-            <Route path="subscriptions" element={<SubscriptionsPage />} />
-            <Route path="messages" element={<MessagesPage />} />
-            <Route path="payments" element={<PaymentsPage />} />
-            <Route path="plans" element={<PlansPage />} />
-            <Route path="device-slots" element={<DeviceSlotPlansPage />} />
-            <Route path="settings" element={<SettingsPage />} />
-            <Route path="bot-pages" element={<BotPagesPage />} />
-            <Route path="marzban" element={<MarzbanPage />} />
-            <Route path="clients" element={<ClientsPage />} />
+            <Route path="/" element={<Navigate to="/subscriptions" replace />} />
+            <Route path="/subscriptions" element={<SubscriptionsPage />} />
+            <Route path="/messages" element={<MessagesPage />} />
+            <Route path="/payments" element={<PaymentsPage />} />
+            <Route path="/plans" element={<PlansPage />} />
+            <Route path="/device-slots" element={<DeviceSlotPlansPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/bot-pages" element={<BotPagesPage />} />
+            <Route path="/marzban" element={<MarzbanPage />} />
+            <Route path="/clients" element={<ClientsPage />} />
           </Route>
 
-          <Route path="/admin" element={<Navigate to="/" replace />} />
-          <Route path="/admin/login" element={<Navigate to="/login" replace />} />
-          <Route path="/admin/*" element={<Navigate to="/" replace />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/subscriptions" replace />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

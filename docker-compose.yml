@@ -1,5 +1,8 @@
 version: '3.8'
 
+# Важно: restart НЕ подтягивает новый код.
+# Нужно: docker compose up -d --build
+# Если всё ещё старая версия: docker compose build --no-cache && docker compose up -d
 services:
   frontend:
     build:
