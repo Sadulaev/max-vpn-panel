@@ -142,6 +142,11 @@ export const subscriptionsAPI = {
     api.get('/subscriptions/export-unique-max-ids', { responseType: 'blob' }),
   getUnsynced: () => api.get<Subscription[]>('/subscriptions/unsynced'),
   sync: () => api.post<{ success: boolean; data: { synced: number; failed: number; errors: string[] } }>('/subscriptions/sync'),
+  restore: () =>
+    api.post<{
+      success: boolean;
+      data: { restored: number; skipped: number; failed: number; errors: string[] };
+    }>('/subscriptions/restore'),
 };
 
 export const paymentsAPI = {

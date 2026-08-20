@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button, Modal, Form, Input, InputNumber, message, Tag, Select, Empty, Spin, Pagination, Badge } from 'antd';
-import { PlusOutlined, CopyOutlined, DeleteOutlined, SearchOutlined, ReloadOutlined, DownloadOutlined, SyncOutlined, TeamOutlined } from '@ant-design/icons';
+import { PlusOutlined, CopyOutlined, DeleteOutlined, SearchOutlined, ReloadOutlined, DownloadOutlined, SyncOutlined, TeamOutlined, CloudSyncOutlined } from '@ant-design/icons';
 import { subscriptionsAPI, Subscription } from '../services/api';
 import dayjs from 'dayjs';
 
@@ -12,6 +12,7 @@ const SubscriptionsPage = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [processLoading, setProcessLoading] = useState(false);
   const [syncLoading, setSyncLoading] = useState(false);
+  const [restoreLoading, setRestoreLoading] = useState(false);
   const [unsyncedCount, setUnsyncedCount] = useState(0);
   const [searchValue, setSearchValue] = useState('');
   const [sourceFilter, setSourceFilter] = useState<string>('');
@@ -72,6 +73,38 @@ const SubscriptionsPage = () => {
     } finally {
       setSyncLoading(false);
     }
+  };
+
+  const handleRestore = () => {
+    Modal.confirm({
+      title: 'Восстановить подписки в Remnawave?',
+      content:
+        'Будут заново созданы все локально неистёкшие подписки, которых нет в Remnawave. Short UUID сохранится — старые ссылки подписки продолжат работать.',
+      okText: 'Восстановить',
+      cancelText: 'Отмена',
+      onOk: async () => {
+        setRestoreLoading(true);
+        try {
+          const res = await subscriptionsAPI.restore();
+          const { restored, skipped, failed } = res.data.data;
+          if (failed > 0) {
+            message.warning(
+              `Восстановлено: ${restored}, пропущено: ${skipped}, ошибок: ${failed}`,
+            );
+          } else {
+            message.success(
+              `Восстановлено: ${restored}, уже были в Remnawave: ${skipped}`,
+            );
+          }
+          fetchSubscriptions();
+          fetchUnsyncedCount();
+        } catch {
+          message.error('Ошибка восстановления');
+        } finally {
+          setRestoreLoading(false);
+        }
+      },
+    });
   };
 
   const handleCreate = () => {
@@ -226,6 +259,14 @@ const SubscriptionsPage = () => {
               Синхронизировать
             </Button>
           </Badge>
+          <Button
+            icon={<CloudSyncOutlined />}
+            loading={restoreLoading}
+            onClick={handleRestore}
+            danger
+          >
+            Восстановить в Remnawave
+          </Button>
           <Button icon={<DownloadOutlined />} onClick={handleExportCsv}>
             Экспорт CSV
           </Button>
