@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button, Modal, Form, Input, InputNumber, message, Tag, Select, Empty, Spin, Pagination, Badge } from 'antd';
-import { PlusOutlined, CopyOutlined, DeleteOutlined, SearchOutlined, ReloadOutlined, DownloadOutlined, SyncOutlined, TeamOutlined, CloudSyncOutlined } from '@ant-design/icons';
+import { PlusOutlined, CopyOutlined, DeleteOutlined, SearchOutlined, ReloadOutlined, DownloadOutlined, SyncOutlined, TeamOutlined, CloudSyncOutlined, CloudDownloadOutlined } from '@ant-design/icons';
 import { subscriptionsAPI, Subscription } from '../services/api';
 import dayjs from 'dayjs';
 
@@ -13,6 +13,7 @@ const SubscriptionsPage = () => {
   const [processLoading, setProcessLoading] = useState(false);
   const [syncLoading, setSyncLoading] = useState(false);
   const [restoreLoading, setRestoreLoading] = useState(false);
+  const [restoreFromRwLoading, setRestoreFromRwLoading] = useState(false);
   const [unsyncedCount, setUnsyncedCount] = useState(0);
   const [searchValue, setSearchValue] = useState('');
   const [sourceFilter, setSourceFilter] = useState<string>('');
@@ -102,6 +103,38 @@ const SubscriptionsPage = () => {
           message.error('Ошибка восстановления');
         } finally {
           setRestoreLoading(false);
+        }
+      },
+    });
+  };
+
+  const handleRestoreFromRemnawave = () => {
+    Modal.confirm({
+      title: 'Восстановить подписки из Remnawave?',
+      content:
+        'В локальную БД будут импортированы все пользователи Remnawave с Max ID (поле telegramId) и неистёкшей подпиской. Просроченные и без Max ID будут пропущены. После этого подписки снова отобразятся в боте.',
+      okText: 'Восстановить',
+      cancelText: 'Отмена',
+      onOk: async () => {
+        setRestoreFromRwLoading(true);
+        try {
+          const res = await subscriptionsAPI.restoreFromRemnawave();
+          const { restored, usersCreated, skipped, failed } = res.data.data;
+          if (failed > 0) {
+            message.warning(
+              `Подписок: ${restored}, пользователей: ${usersCreated}, пропущено: ${skipped}, ошибок: ${failed}`,
+            );
+          } else {
+            message.success(
+              `Восстановлено подписок: ${restored}, пользователей: ${usersCreated}, пропущено: ${skipped}`,
+            );
+          }
+          fetchSubscriptions();
+          fetchUnsyncedCount();
+        } catch {
+          message.error('Ошибка восстановления из Remnawave');
+        } finally {
+          setRestoreFromRwLoading(false);
         }
       },
     });
@@ -266,6 +299,15 @@ const SubscriptionsPage = () => {
             danger
           >
             Восстановить в Remnawave
+          </Button>
+          <Button
+            icon={<CloudDownloadOutlined />}
+            loading={restoreFromRwLoading}
+            onClick={handleRestoreFromRemnawave}
+            type="primary"
+            ghost
+          >
+            Восстановить из Remnawave
           </Button>
           <Button icon={<DownloadOutlined />} onClick={handleExportCsv}>
             Экспорт CSV

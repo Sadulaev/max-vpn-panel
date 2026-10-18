@@ -147,6 +147,17 @@ export const subscriptionsAPI = {
       success: boolean;
       data: { restored: number; skipped: number; failed: number; errors: string[] };
     }>('/subscriptions/restore'),
+  restoreFromRemnawave: () =>
+    api.post<{
+      success: boolean;
+      data: {
+        restored: number;
+        usersCreated: number;
+        skipped: number;
+        failed: number;
+        errors: string[];
+      };
+    }>('/subscriptions/restore-from-remnawave'),
 };
 
 export const paymentsAPI = {
