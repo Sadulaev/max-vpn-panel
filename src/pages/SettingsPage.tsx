@@ -8,6 +8,11 @@ interface Settings {
   standardEnabled: boolean;
   antiThrottlingEnabled: boolean;
   supportContact: string;
+  maxBotTokenMasked?: string;
+  telegramBotTokenMasked?: string;
+  maxBotConfigured?: boolean;
+  telegramBotConfigured?: boolean;
+  maxBotUsername?: string | null;
 }
 
 export default function SettingsPage() {
@@ -15,6 +20,8 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
   const [supportDraft, setSupportDraft] = useState('');
+  const [maxTokenDraft, setMaxTokenDraft] = useState('');
+  const [tgTokenDraft, setTgTokenDraft] = useState('');
 
   useEffect(() => {
     api.get<Settings>('/auth/settings')
@@ -54,6 +61,56 @@ export default function SettingsPage() {
       message.success('Ссылка поддержки обновлена');
     } catch {
       message.error('Ошибка сохранения');
+    } finally {
+      setSaving(null);
+    }
+  };
+
+  const saveMaxToken = async () => {
+    const next = maxTokenDraft.trim();
+    if (!next) {
+      message.warning('Введите новый MAX_BOT_TOKEN');
+      return;
+    }
+    setSaving('maxBotToken');
+    try {
+      const { data } = await api.put<Settings>('/auth/settings', { maxBotToken: next });
+      setSettings(data);
+      setMaxTokenDraft('');
+      message.success(
+        data.maxBotUsername
+          ? `MAX-бот переключён на @${data.maxBotUsername}`
+          : 'MAX_BOT_TOKEN обновлён без перезапуска',
+      );
+    } catch (err: unknown) {
+      const detail =
+        (err as { response?: { data?: { message?: string | string[] } } })?.response?.data
+          ?.message;
+      const text = Array.isArray(detail) ? detail.join(', ') : detail;
+      message.error(text || 'Ошибка сохранения MAX-токена');
+    } finally {
+      setSaving(null);
+    }
+  };
+
+  const saveTgToken = async () => {
+    const next = tgTokenDraft.trim();
+    if (!next) {
+      message.warning('Введите новый TELEGRAM_BOT_TOKEN');
+      return;
+    }
+    setSaving('telegramBotToken');
+    try {
+      const { data } = await api.put<Settings>('/auth/settings', { telegramBotToken: next });
+      setSettings(data);
+      setTgTokenDraft('');
+      message.success('TELEGRAM_BOT_TOKEN обновлён без перезапуска');
+    } catch (err: unknown) {
+      const detail =
+        (err as { response?: { data?: { message?: string | string[] } } })?.response?.data
+          ?.message;
+      const text = Array.isArray(detail) ? detail.join(', ') : detail;
+      message.error(text || 'Ошибка сохранения Telegram-токена');
     } finally {
       setSaving(null);
     }
@@ -119,6 +176,65 @@ export default function SettingsPage() {
                 onClick={() => void saveSupportContact()}
               >
                 Сохранить
+              </Button>
+            </Space.Compact>
+          </div>
+
+          <Divider style={{ margin: '4px 0' }} />
+
+          <div>
+            <Text strong>MAX_BOT_TOKEN</Text>
+            <br />
+            <Text type="secondary" style={{ fontSize: 13 }}>
+              Токен бота MAX. Смена применяется сразу: webhook перерегистрируется без рестарта сервера.
+              {settings?.maxBotUsername ? ` Сейчас: @${settings.maxBotUsername}.` : ''}
+              {settings?.maxBotTokenMasked
+                ? ` Текущий: ${settings.maxBotTokenMasked}`
+                : ' Токен не задан.'}
+            </Text>
+            <Space.Compact style={{ width: '100%', marginTop: 10 }}>
+              <Input.Password
+                value={maxTokenDraft}
+                placeholder="Новый MAX_BOT_TOKEN"
+                autoComplete="off"
+                onChange={(e) => setMaxTokenDraft(e.target.value)}
+                onPressEnter={() => void saveMaxToken()}
+              />
+              <Button
+                type="primary"
+                loading={saving === 'maxBotToken'}
+                disabled={!maxTokenDraft.trim()}
+                onClick={() => void saveMaxToken()}
+              >
+                Применить
+              </Button>
+            </Space.Compact>
+          </div>
+
+          <div>
+            <Text strong>TELEGRAM_BOT_TOKEN</Text>
+            <br />
+            <Text type="secondary" style={{ fontSize: 13 }}>
+              Токен Telegram-бота для уведомлений в канал. Применяется сразу, без перезапуска.
+              {settings?.telegramBotTokenMasked
+                ? ` Текущий: ${settings.telegramBotTokenMasked}`
+                : ' Токен не задан.'}
+            </Text>
+            <Space.Compact style={{ width: '100%', marginTop: 10 }}>
+              <Input.Password
+                value={tgTokenDraft}
+                placeholder="Новый TELEGRAM_BOT_TOKEN"
+                autoComplete="off"
+                onChange={(e) => setTgTokenDraft(e.target.value)}
+                onPressEnter={() => void saveTgToken()}
+              />
+              <Button
+                type="primary"
+                loading={saving === 'telegramBotToken'}
+                disabled={!tgTokenDraft.trim()}
+                onClick={() => void saveTgToken()}
+              >
+                Применить
               </Button>
             </Space.Compact>
           </div>
